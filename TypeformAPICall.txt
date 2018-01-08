@@ -1,0 +1,27 @@
+#Below is the API call
+
+[string]$webstring ="https://api.typeform.com/v1/form/  "Put the Survey Code Here"   ?key=   "Put the API Code Here"     &completed=true"
+$webget = New-Object System.Net.WebClient
+$result = $webget.DownloadString($webstring)
+
+$JSON = $result | ConvertFrom-JSON 
+#$JSON.responses.answers
+
+$list = $JSON.responses.answers
+
+#Below loads the table into SQL Server
+
+
+$Server = "     Server Name Here     "
+$Database = "    Database Name Here     "
+$Connection = New-Object System.Data.SqlClient.SqlConnection
+$Connection.ConnectionString = "Server='$Server';database='$Database';trusted_connection=true;"
+$Connection.Open()
+$Command = New-Object System.Data.SqlClient.SqlCommand
+$Command.Connection = $Connection
+foreach ($i in $list) {
+  $sql = "INSERT INTO Schema.TableName (Column1,Column2,Column3) VALUES ('$($i.    Typeform's Question ID for Column1    )',LEFT('$($i.            Typeform's Question ID for Column2             )',8),'$($i.    Typeform's Question ID for Column3       )');"
+$Command.CommandText = $sql
+$Command.ExecuteNonQuery()
+}
+$Connection.Close() 
