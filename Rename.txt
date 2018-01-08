@@ -1,0 +1,1 @@
+Get-ChildItem *.xlsx  |Rename-Item -NewName {$_.name -replace 'November','November 2017'} 
